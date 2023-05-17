@@ -12,7 +12,7 @@ module.exports = {
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
-    clean: true,
+    // clean: true,
   },
 
   module: {
@@ -20,6 +20,13 @@ module.exports = {
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
+        include: [
+          path.resolve(__dirname, './src/style'),
+        ],
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
       },
     ],
   },

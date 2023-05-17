@@ -52,7 +52,8 @@ export default class ProjectsManager {
     this.projectsMemoryUpdate();
   }
 
-  removeProject(index) {
+  removeProject(projectName) {
+    const index = this.mProjects.findIndex((project) => (project.name === projectName));
     this.projects.splice(index, 1);
     this.projectsMemoryUpdate();
   }
