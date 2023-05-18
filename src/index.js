@@ -1,18 +1,12 @@
-import { format } from 'date-fns';
 import MemoryManager from './MemoryManager';
 import ProjectsManager from './ProjectsManager';
 import createDisplay from './DisplayHandler';
 
 localStorage.clear();
 
-const init = (() => {
-  const PM = new ProjectsManager();
-  const memoryManager = MemoryManager();
-  memoryManager.loadProjectsManager(PM);
-  createDisplay(PM);
-  return {
-    PM,
-  };
-})();
+const PM = new ProjectsManager();
+const memoryManager = MemoryManager();
+memoryManager.loadProjectsManager(PM);
+createDisplay(PM);
 
-// setTimeout(function() {console.log(init.PM);}, 5000);
+// setTimeout(function() {console.log(PM);}, 5000);

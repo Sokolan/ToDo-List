@@ -2,7 +2,6 @@ import gitImg from './img/github.png';
 import './style/style.css';
 import './style/header.css';
 import './style/footer.css';
-import ProjectsManager from './ProjectsManager';
 
 let PM;
 
