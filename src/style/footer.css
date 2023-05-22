@@ -1,6 +1,20 @@
 .footer {
+  font-family: roboto, sans-serif;
+  --gap-items: 20px;
+  grid-column: 1 / span 2;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-items);
+  background-color: green;
 }
+
+.footer > p {
+  border-left: 1px solid black;
+  padding-left: var(--gap-items);
+  padding: 10px 0px 10px var(--gap-items);
+}
+
 
 .git-img {
   height: 20px;

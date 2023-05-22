@@ -1,0 +1,19 @@
+@font-face {
+  font-family: MarckScript-Regular;
+  src: url('../fonts/MarckScript-Regular.ttf');
+}
+
+.header {
+  grid-column: 1 / span 2;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  background-color: red;
+}
+
+.logo {
+  font-size: 3rem;
+  font-weight: 800;
+  font-family: MarckScript-Regular;
+}

@@ -1,11 +1,8 @@
-import {
-  endOfToday,
-  endOfWeek,
-} from 'date-fns';
+import { endOfToday, endOfWeek } from "date-fns";
 
-import Project from './Project';
-import Task from './Task';
-import MemoryManager from './MemoryManager';
+import Project from "./Project";
+import Task from "./Task";
+import MemoryManager from "./MemoryManager";
 
 export default class ProjectsManager {
   constructor() {
@@ -28,7 +25,9 @@ export default class ProjectsManager {
   }
 
   setCurrentProject(projectName) {
-    const newCurrent = this.mProjects.find((project) => project.name === projectName);
+    const newCurrent = this.mProjects.find(
+      (project) => project.name === projectName
+    );
     if (!newCurrent) {
       return;
     }
@@ -53,18 +52,20 @@ export default class ProjectsManager {
   }
 
   removeProject(projectName) {
-    const index = this.mProjects.findIndex((project) => (project.name === projectName));
-    this.projects.splice(index, 1);
+    const index = this.mProjects.findIndex(
+      (project) => project.name === projectName
+    );
+    this.mProjects.splice(index, 1);
     this.projectsMemoryUpdate();
   }
 
   // Get tasks of current project
-  get tasks() {
+  getTasks() {
     return this.mCurrentProject.tasks;
   }
 
   #tasksOfProject(projectName) {
-    return this.mProjects.find((project) => (project.name === projectName)).tasks;
+    return this.mProjects.tasks;
   }
 
   // Get all tasks from all projects
@@ -80,7 +81,9 @@ export default class ProjectsManager {
   tasksEndToday() {
     const today = endOfToday();
     const tasks = [];
-    this.mProjects.forEach((project) => tasks.push(...project.tasksToDate(today)));
+    this.mProjects.forEach((project) =>
+      tasks.push(...project.tasksToDate(today))
+    );
     return tasks;
   }
 
@@ -88,17 +91,29 @@ export default class ProjectsManager {
   tasksWeekRange() {
     const week = endOfWeek(new Date());
     const tasks = [];
-    this.mProjects.forEach((project) => tasks.push(...project.tasksToDate(week)));
+    this.mProjects.forEach((project) =>
+      tasks.push(...project.tasksToDate(week))
+    );
     return tasks;
   }
 
   taskMemoryUpdate() {
-    this.mMemoryManager.saveTasks(this.mCurrentProject, this.#tasksOfProject(this.mCurrentProject));
+    this.mMemoryManager.saveTasks(
+      this.mCurrentProject,
+      this.#tasksOfProject(this.mCurrentProject)
+    );
   }
 
   // Adding task to current project
-  addTask(name, dateDue, prio = '2', isDone = false, note = '') {
-    const task = new Task(this.mCurrentProject.generateId(), name, dateDue, prio, isDone, note);
+  addTask(name, dateDue, prio = "2", isDone = false, note = "") {
+    const task = new Task(
+      this.mCurrentProject.generateId(),
+      name,
+      dateDue,
+      prio,
+      isDone,
+      note
+    );
     this.mCurrentProject.addTask(task);
     this.taskMemoryUpdate();
   }
@@ -110,7 +125,14 @@ export default class ProjectsManager {
   }
 
   // Edit task of current project
-  editTask(id, name, dateDue = undefined, prio = '2', isDone = false, note = '') {
+  editTask(
+    id,
+    name,
+    dateDue = undefined,
+    prio = "2",
+    isDone = false,
+    note = ""
+  ) {
     const task = new Task(id, name, dateDue, prio, isDone, note);
     this.mCurrentProject.replaceTask(id, task);
     this.taskMemoryUpdate();

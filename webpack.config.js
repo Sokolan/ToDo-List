@@ -25,6 +25,12 @@ module.exports = {
         ],
       },
       {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        include: [
+          path.resolve(__dirname, './src/fonts'),
+        ],
+      },
+      {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },

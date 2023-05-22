@@ -1,6 +1,9 @@
 export default function MemoryManager() {
   const saveProjects = (projectsManager) => {
-    localStorage.setItem('projectsManager', JSON.stringify(projectsManager.projectsNames));
+    localStorage.setItem(
+      "projectsManager",
+      JSON.stringify(projectsManager.projectsNames)
+    );
   };
 
   const saveTasks = (projectName, tasks) => {
@@ -22,7 +25,7 @@ export default function MemoryManager() {
   };
 
   const loadProjectsManager = (projectsManager) => {
-    const projects = JSON.parse(localStorage.getItem('projectsManager'));
+    const projects = JSON.parse(localStorage.getItem("projectsManager"));
     if (!projects) {
       return;
     }

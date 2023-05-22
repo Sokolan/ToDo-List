@@ -1,0 +1,53 @@
+.side-bar {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 10px;
+  background-color: orange;
+}
+
+.tasks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.projects-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.add-project-container {
+  display: flex;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.projects-container {
+  height: 100%;
+  border: 2px solid black;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 10px;
+  align-items: left;
+}
+
+.project-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.project-container > button {
+  background-color: yellow;
+  border: none;
+}
+
+.projects-container > .project-container:not(:first-child) {
+  /* Your styles here */
+  border-top: 1px solid black;
+  padding: 10px 0px 0px 0px;
+}

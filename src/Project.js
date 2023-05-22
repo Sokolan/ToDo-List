@@ -1,6 +1,4 @@
-import {
-  compareAsc, compareDesc, isBefore, parseISO,
-} from 'date-fns';
+import { compareAsc, compareDesc, isBefore, parseISO } from "date-fns";
 
 export default class Project {
   constructor(name) {
@@ -21,7 +19,7 @@ export default class Project {
 
   generateId() {
     this.mId += 1;
-    return (this.mId - 1);
+    return this.mId - 1;
   }
 
   addTask(task) {
@@ -32,7 +30,7 @@ export default class Project {
     if (id < 0 || id > this.mId) {
       console.log(`ILLEGAL ID: ${id}`);
     }
-    this.mTasks = this.mTasks.filter((task) => (task.id !== id));
+    this.mTasks = this.mTasks.filter((task) => task.id !== id);
   }
 
   replaceTask(targetId, newTask) {
@@ -49,15 +47,19 @@ export default class Project {
   }
 
   tasksToDate(date) {
-    return this.tasks.filter((task) => (isBefore(parseISO(task.dateDue), date)));
+    return this.tasks.filter((task) => isBefore(parseISO(task.dateDue), date));
   }
 
   sortTasksByDate(asc) {
     // Lower date means it's closer/smaller
     if (asc === true) {
-      this.tasks.sort((a, b) => compareAsc(parseISO(a.dateDue), parseISO(b.dateDue)));
+      this.tasks.sort((a, b) =>
+        compareAsc(parseISO(a.dateDue), parseISO(b.dateDue))
+      );
     } else {
-      this.tasks.sort((a, b) => compareDesc(parseISO(a.dateDue), parseISO(b.dateDue)));
+      this.tasks.sort((a, b) =>
+        compareDesc(parseISO(a.dateDue), parseISO(b.dateDue))
+      );
     }
   }
 

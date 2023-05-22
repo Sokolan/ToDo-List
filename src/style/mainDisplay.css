@@ -1,0 +1,13 @@
+.main-display {
+  background-color: pink;
+  padding: 20px 50px;
+}
+
+.add-task-container {
+  background-color: transparent;
+  border: 1px solid black;
+}
+
+.add-task-container > img {
+  height: 20px;
+}
