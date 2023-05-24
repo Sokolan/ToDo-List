@@ -5,8 +5,6 @@ export default class Project {
     this.mName = name;
   }
 
-  mId = 0;
-
   get name() {
     return this.mName;
   }
@@ -17,11 +15,6 @@ export default class Project {
     return this.mTasks;
   }
 
-  generateId() {
-    this.mId += 1;
-    return this.mId - 1;
-  }
-
   addTask(task) {
     this.mTasks.push(task);
   }
@@ -30,7 +23,7 @@ export default class Project {
     if (id < 0 || id > this.mId) {
       console.log(`ILLEGAL ID: ${id}`);
     }
-    this.mTasks = this.mTasks.filter((task) => task.id !== id);
+    this.mTasks = this.mTasks.filter((task) => task.id !== Number.parseInt(id, 10));
   }
 
   replaceTask(targetId, newTask) {

@@ -1,5 +1,9 @@
 import gitImg from "./img/github.png";
 import addTaskImg from "./img/add-task.png";
+import expandTask from "./img/expand.png";
+import minimizeTask from "./img/minimize.png";
+import editTask from "./img/edit-button.png";
+import deleteTask from "./img/delete-button.png";
 import "./style/style.css";
 import "./style/header.css";
 import "./style/mainDisplay.css";
@@ -8,7 +12,124 @@ import "./style/sideBar.css";
 
 let PM;
 
-const createNewTaskForm = () => {
+// Creates and adds a task to tasks container
+const createNewTask = (
+  id,
+  name,
+  dueDate,
+  prio,
+  description,
+  isDone = false
+) => {
+  const createTaskButtons = () => {
+    const createButton = (buttonName, buttonImg) => {
+      const button = document.createElement("button");
+      button.classList.add(buttonName);
+
+      const taskImg = new Image();
+      taskImg.src = buttonImg;
+
+      button.appendChild(taskImg);
+      return button;
+    };
+    // Create container for edit, delete and expand buttons
+    const taskButtons = document.createElement("div");
+    taskButtons.classList.add("task-buttons-container");
+
+    const expandButton = createButton("resize-task", expandTask);
+    expandButton.addEventListener("click", (event) => {
+      // Get the task container and the img of resizing the task
+      const taskContainer = event.currentTarget.parentElement.parentElement;
+
+      let taskDescription = document.querySelector(
+        `.task-container[id="${taskContainer.id}"] > p.task-description`
+      );
+      const resizeImg = document.querySelector(
+        `.task-container[id="${taskContainer.id}"] .resize-task > img`
+      );
+      if (taskDescription === null) {
+        taskDescription = document.createElement("p");
+        taskDescription.classList.add("task-description");
+        taskDescription.textContent = PM.getTask(taskContainer.id).description;
+        taskContainer.appendChild(taskDescription);
+        resizeImg.src = minimizeTask;
+      } else {
+        taskDescription.remove();
+        resizeImg.src = expandTask;
+      }
+    });
+
+    const editButton = createButton("edit-task", editTask);
+    editButton.addEventListener("click", (event) => {
+      const form = createNewTaskForm(id, name, dueDate, prio, description);
+      const taskContainer = event.currentTarget.parentElement.parentElement;
+      taskContainer.insertAdjacentElement("afterEnd", form);
+      taskContainer.remove();
+    });
+
+    const deleteButton = createButton("delete-task", deleteTask);
+    deleteButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      // delete-button -> buttons-container -> task-container
+      const taskContainer = event.currentTarget.parentElement.parentElement;
+      PM.removeTask(taskContainer.id);
+      event.currentTarget.parentElement.parentElement.remove();
+    });
+
+    taskButtons.appendChild(expandButton);
+    taskButtons.appendChild(editButton);
+    taskButtons.appendChild(deleteButton);
+    return taskButtons;
+  };
+  // Container of the tasks
+  const container = document.querySelector(".tasks-container");
+  // Create the task to add
+  const task = document.createElement("div");
+  task.classList.add("task-container");
+  task.setAttribute("id", id);
+
+  // Task prio
+  task.setAttribute("task-prio", `${prio}`);
+
+  // Create checkmark for changing completeness status
+  const taskIsDone = document.createElement("input");
+  taskIsDone.setAttribute("type", "checkbox");
+  if (isDone) {
+    taskIsDone.checked = true;
+  }
+  taskIsDone.addEventListener("click", (event) => {
+    const taskContainer = event.target.parentElement;
+    PM.changeTaskStatus(taskContainer.id);
+    console.log(PM);
+  });
+  task.appendChild(taskIsDone);
+
+  // Task name
+  const taskName = document.createElement("p");
+  taskName.classList.add("task-name");
+  taskName.textContent = name;
+  task.appendChild(taskName);
+
+  // Task due date
+  const taskDueDate = document.createElement("p");
+  taskDueDate.classList.add("task-due-date");
+  taskDueDate.textContent = dueDate;
+  task.appendChild(taskDueDate);
+
+  // Create edit and delete buttons
+  task.appendChild(createTaskButtons());
+
+  container.appendChild(task);
+};
+
+// Creates and returns a form for new task
+const createNewTaskForm = (
+  taskId = -1,
+  taskName = "aaa",
+  taskDueDate = "2022-01-01",
+  taskPrio = 1,
+  taskDescription = "Add Description"
+) => {
   // Create form field
   const createInputField = (type, id, placeholder = "") => {
     const inputField = document.createElement("input");
@@ -21,12 +142,12 @@ const createNewTaskForm = () => {
   };
   // Create priority radio fields
   const createPrioField = () => {
-    const addRadio = (fieldset, id, text, value, checked = false) => {
+    const addRadio = (fieldset, id, text, value, checked) => {
       const radio = document.createElement("input");
       radio.setAttribute("type", "radio");
       radio.setAttribute("id", id);
       radio.setAttribute("value", value);
-      radio.setAttribute("name", "task-priority");
+      radio.setAttribute("name", "task-priority-form");
       if (checked) {
         radio.checked = true;
       }
@@ -41,9 +162,10 @@ const createNewTaskForm = () => {
     const fieldset = document.createElement("fieldset");
     const legend = document.createElement("legend");
     legend.textContent = "Task Priority";
-    addRadio(fieldset, "low-prio", "Low", 3);
-    addRadio(fieldset, "medium-prio", "Medium", 2, true);
-    addRadio(fieldset, "high-prio", "High", 1);
+    const taskPrioNum = Number.parseInt(taskPrio, 10);
+    addRadio(fieldset, "low-prio", "Low", 3, taskPrioNum === 3);
+    addRadio(fieldset, "medium-prio", "Medium", 2, taskPrioNum === 2);
+    addRadio(fieldset, "high-prio", "High", 1, taskPrioNum === 1);
     fieldset.appendChild(legend);
     return fieldset;
   };
@@ -57,29 +179,91 @@ const createNewTaskForm = () => {
     submitButton.addEventListener("click", (event) => {
       // Prevent from default behaviour of submit button
       event.preventDefault();
-      // Find active prio
-      
-      // AddTask(name, dateDue, prio = '2', isDone = false, note = '')
-      PM.addTask(
-        document.querySelector("#task-name").value,
-        document.querySelector("#task-due-date").value,
-        document.querySelector('[name="task-priority"]:checked').value,
-        false,
-        document.querySelector('#task-description').value
+      // Get task info from form
+      const taskNameSubmit = document.querySelector("#task-name-form").value;
+      const taskDueDateSubmit = document.querySelector(
+        "#task-due-date-form"
+      ).value;
+      const taskPrioSubmit = document.querySelector(
+        '[name="task-priority-form"]:checked'
+      ).value;
+      const taskDescriptionSubmit = document.querySelector(
+        "#task-description-form"
+      ).value;
+
+      let taskIdSubmit;
+      if (taskId !== -1) {
+        PM.editTask(
+          taskId,
+          taskNameSubmit,
+          taskDueDateSubmit,
+          taskPrioSubmit,
+          taskDescriptionSubmit
+        );
+        taskIdSubmit = taskId;
+      }
+      // Else taskId is -1 so we're creating a new task
+      else {
+        taskIdSubmit = PM.addTask(
+          taskNameSubmit,
+          taskDueDateSubmit,
+          taskPrioSubmit,
+          false,
+          taskDescriptionSubmit
+        );
+      }
+      if (taskId !== -1) {
+        taskIdSubmit = taskId;
+      }
+      document.querySelector("form").remove();
+      createNewTask(
+        taskIdSubmit,
+        taskNameSubmit,
+        taskDueDateSubmit,
+        taskPrioSubmit,
+        taskDescription
       );
-      document.querySelector('form').remove();
+      if (
+        document.querySelector("form") === null &&
+        document.querySelector(".project-header").textContent !== "All Tasks"
+      ) {
+        document.querySelector(".add-task-container").style.display = "block";
+      }
+      console.log(PM);
     });
     return submitButton;
   };
 
+  // Create the form element
   const form = document.createElement("form");
   form.setAttribute("id", "new-task-form");
 
-  form.appendChild(createInputField("text", "task-name", "Task Name"));
-  form.appendChild(createInputField("date", "task-due-date", ""));
+  // Disable creation of another form
+  document.querySelector(".add-task-container").style.display = "none";
+
+  // Create name and adds a value incase one provided
+  const taskNameFormField = createInputField(
+    "text",
+    "task-name-form",
+    "Task Name"
+  );
+  if (taskName !== "") {
+    taskNameFormField.value = taskName;
+  }
+  form.appendChild(taskNameFormField);
+  // Create due date and adds a default value
+  const dueDateFormField = createInputField(
+    "date",
+    "task-due-date-form",
+    taskDueDate
+  );
+  dueDateFormField.setAttribute("value", taskDueDate);
+  form.appendChild(dueDateFormField);
+
   form.appendChild(createPrioField());
+
   form.appendChild(
-    createInputField("text", "task-description", "Add description")
+    createInputField("text", "task-description-form", taskDescription)
   );
 
   form.appendChild(createFormSubmitButton());
@@ -87,7 +271,7 @@ const createNewTaskForm = () => {
 };
 
 // Change current project displayed
-const updateCurrentProject = (projectName, dummyProject = false) => {
+const updateCurrentProject = (projectName, projectType = "regular") => {
   // Creates header with project name for main display
   const createProjectHeader = () => {
     const projectHeader = document.createElement("p");
@@ -98,85 +282,54 @@ const updateCurrentProject = (projectName, dummyProject = false) => {
 
   const createControls = () => {
     const createAddTask = () => {
+      // Create the button container
       const addTaskContainer = document.createElement("button");
       addTaskContainer.classList.add("add-task-container");
 
+      // Set image
       const taskImg = new Image();
       taskImg.src = addTaskImg;
-
       addTaskContainer.appendChild(taskImg);
+
+      // Clicking the button will open a form to fill to add a task
       addTaskContainer.addEventListener("click", () => {
-        const newTaskButton = document.querySelector('.add-task-container');
-        const referenceElement = document.querySelector('.project-header');
-        referenceElement.insertAdjacentElement('afterEnd', createNewTaskForm());
+        const referenceElement = document.querySelector(".project-header");
+        referenceElement.insertAdjacentElement("afterEnd", createNewTaskForm());
       });
       return addTaskContainer;
     };
     const controls = document.createElement("div");
     controls.classList.add("project-controls");
-
-    controls.appendChild(createAddTask());
+    const addTaskButton = createAddTask();
+    if (projectType !== "regular") {
+      addTaskButton.style.display = "none";
+    }
+    controls.appendChild(addTaskButton);
     return controls;
   };
 
   // Create The tasks of the current project
-  const createTasks = () => {
+  const createTasksContainer = () => {
     const tasksContainer = document.createElement("div");
     tasksContainer.classList.add("tasks-container");
-    const tasks = PM.getTasks();
-
-    // Create DOM element for each task and adds it to tasksContainer
-    tasks.forEach((task) => {
-      // Create the container for the task
-      const taskContainer = document.createElement("div");
-      taskContainer.classList.add("task-container");
-
-      // Is task done
-      const taskStatus = document.createElement("div");
-      taskStatus.classList.add("task-status");
-      if (task.isDone) {
-        taskStatus.classList.add("done");
-      } else {
-        taskStatus.classList.add("not-done");
-      }
-      taskContainer.appendChild(taskStatus);
-
-      // Task name
-      const taskName = document.createElement("div");
-      taskName.classList.add("task-name");
-      taskName.textContent = task.name;
-      taskContainer.appendChild(taskName);
-
-      // Task Date
-      const taskDate = document.createElement("div");
-      taskDate.classList.add("task-date");
-      taskDate.textContent = task.dateDue;
-      taskContainer.appendChild(taskDate);
-
-      // task edit and remove buttuns
-      const taskButtons = document.createElement("div");
-      taskButtons.classList.add("task-buttons-container");
-
-      const editButton = document.createElement("button");
-      editButton.classList.add("task-edit");
-      taskButtons.appendChild(editButton);
-
-      const removeButton = document.createElement("button");
-      removeButton.classList.add("task-remove");
-      editButton.appendChild(removeButton);
-
-      taskContainer.appendChild(taskButtons);
-      // TODO: add functionality to addTask and removeTask
-
-      // Tasl description
-      const taskDescription = document.createElement("p");
-      taskDescription.classList.add("task-description");
-      taskContainer.appendChild(taskDescription);
-
-      tasksContainer.appendChild(taskContainer);
-    });
 
     return tasksContainer;
+  };
+
+  // Adds all tasks of the current project
+  const addTasksToScreen = () => {
+    const tasks = PM.getTasks();
+    // Create DOM element for each task and adds it to tasksContainer
+    tasks.forEach((task) => {
+      createNewTask(
+        task.id,
+        task.name,
+        task.dateDue,
+        task.prio,
+        task.description,
+        task.isDone
+      );
+    });
   };
 
   PM.setCurrentProject(projectName);
@@ -184,7 +337,9 @@ const updateCurrentProject = (projectName, dummyProject = false) => {
   mainDisplay.replaceChildren("");
   mainDisplay.appendChild(createProjectHeader());
   mainDisplay.appendChild(createControls());
-  mainDisplay.appendChild(createTasks());
+  mainDisplay.appendChild(createTasksContainer());
+
+  addTasksToScreen();
 };
 
 // Header section of display
@@ -213,7 +368,12 @@ const createSideBar = () => {
     };
     const tasksSection = document.createElement("div");
     tasksSection.classList.add("tasks-section");
-    tasksSection.appendChild(createTasksCategory("All Tasks", "all-tasks"));
+    // Get all tasks from all projects
+    const allTasks = createTasksCategory("All Tasks", "all-tasks");
+    allTasks.addEventListener("click", () => {
+      updateCurrentProject("All Tasks", "all");
+    });
+    tasksSection.appendChild(allTasks);
     tasksSection.appendChild(createTasksCategory("Today", "today-tasks"));
     tasksSection.appendChild(createTasksCategory("This Week", "week-tasks"));
     return tasksSection;
@@ -228,9 +388,9 @@ const createSideBar = () => {
       return header;
     };
 
-    // Add project consist of field for name and submit button
-    const createAddProject = () => {
-      const createProject = (projectName) => {
+    // Creates a project ready to be added to projects container
+    const createProjectContainer = (projectName) => {
+      const createProject = () => {
         const project = document.createElement("button");
         project.classList.add("project");
         project.setAttribute("project-name", projectName);
@@ -240,8 +400,7 @@ const createSideBar = () => {
         });
         return project;
       };
-
-      const createDeleteProjectButton = (projectName) => {
+      const createDeleteProjectButton = () => {
         const deleteButton = document.createElement("button");
         deleteButton.classList.add("delete-project");
         deleteButton.textContent = "X";
@@ -254,20 +413,23 @@ const createSideBar = () => {
             `[project-name="${projectName}"]`
           );
           projectsContainer.removeChild(project.parentElement);
+          if (PM.currentProject.name === projectName) {
+            document.querySelector(".main-display").replaceChildren();
+          }
           PM.removeProject(projectName);
         });
 
         return deleteButton;
       };
+      const projectContainer = document.createElement("li");
+      projectContainer.classList.add("project-container");
+      projectContainer.appendChild(createProject(projectName));
+      projectContainer.appendChild(createDeleteProjectButton(projectName));
+      return projectContainer;
+    };
 
-      const createProjectContainer = (projectName) => {
-        const projectContainer = document.createElement("li");
-        projectContainer.classList.add("project-container");
-        projectContainer.appendChild(createProject(projectName));
-        projectContainer.appendChild(createDeleteProjectButton(projectName));
-        return projectContainer;
-      };
-
+    // Add project consist of field for name and submit button
+    const createAddProject = () => {
       // Name field
       const createInputProject = () => {
         const input = document.createElement("input");
@@ -286,7 +448,9 @@ const createSideBar = () => {
 
         submit.addEventListener("click", () => {
           const input = document.querySelector('[id="new-project"]');
-          PM.addProject(input.value);
+          if (PM.addProject(input.value) === 0) {
+            return;
+          }
           const projectsList = document.querySelector(".projects-container");
           projectsList.appendChild(createProjectContainer(input.value));
           input.value = "";
@@ -298,14 +462,19 @@ const createSideBar = () => {
       addProject.classList.add("add-project-container");
       addProject.appendChild(createInputProject());
       addProject.appendChild(createSubmitProjectButton());
-
       return addProject;
     };
 
     // List of projects in the system
-    const createProjectsContainer = () => {
+    const createProjectsContainerAndExistingProjects = () => {
       const projectsContainer = document.createElement("ul");
       projectsContainer.classList.add("projects-container");
+      const projects = PM.projectsNames();
+      projects
+        .filter((project) => project !== "All Tasks")
+        .forEach((project) => {
+          projectsContainer.appendChild(createProjectContainer(project));
+        });
       return projectsContainer;
     };
 
@@ -313,10 +482,10 @@ const createSideBar = () => {
     projectsSction.classList.add("projects-section");
     projectsSction.appendChild(createProjectsHeader());
     projectsSction.appendChild(createAddProject());
-    projectsSction.appendChild(createProjectsContainer());
-
+    projectsSction.appendChild(createProjectsContainerAndExistingProjects());
     return projectsSction;
   };
+
   const sideBar = document.createElement("div");
   sideBar.classList.add("side-bar");
   sideBar.appendChild(createTasksSection());

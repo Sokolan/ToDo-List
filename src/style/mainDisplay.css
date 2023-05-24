@@ -1,13 +1,45 @@
 .main-display {
   background-color: pink;
+  display: flex;
+  flex-direction: column;
   padding: 20px 50px;
 }
 
 .add-task-container {
   background-color: transparent;
   border: 1px solid black;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .add-task-container > img {
+  height: 20px;
+}
+
+.task-container {
+  display: grid;
+  grid-template-columns: 20px 1fr 1fr 1fr;
+}
+
+.task-buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  
+}
+
+.task-buttons-container button {
+  background-color: transparent;
+  border: 1px solid black;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.task-buttons-container img {
   height: 20px;
 }

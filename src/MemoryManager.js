@@ -1,8 +1,10 @@
+import Task from './Task';
+
 export default function MemoryManager() {
-  const saveProjects = (projectsManager) => {
+  const saveProjects = (projectsNames) => {
     localStorage.setItem(
       "projectsManager",
-      JSON.stringify(projectsManager.projectsNames)
+      JSON.stringify(projectsNames)
     );
   };
 
@@ -16,11 +18,15 @@ export default function MemoryManager() {
 
   const loadProject = (projectName, projectsManager) => {
     const tasks = JSON.parse(localStorage.getItem(projectName));
+    console.log(tasks);
     if (!tasks) {
       return;
     }
     tasks.forEach((task) => {
-      projectsManager.addTask(...Object.values(task));
+      console.log(task);
+      console.log(task.id)
+      const newTask = new Task(...Object.values(task));
+      projectsManager.currentProject.addTask(newTask);
     });
   };
 
@@ -29,10 +35,10 @@ export default function MemoryManager() {
     if (!projects) {
       return;
     }
-    projects.forEach((project) => {
+    projects.filter((project) => project.name !== "All Tasks").forEach((project) => {
       projectsManager.addProject(project);
       projectsManager.setCurrentProject(project);
-      loadProject(project);
+      loadProject(project, projectsManager);
     });
   };
 

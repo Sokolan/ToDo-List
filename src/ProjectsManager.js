@@ -7,6 +7,8 @@ import MemoryManager from "./MemoryManager";
 export default class ProjectsManager {
   constructor() {
     this.mProjects = [];
+    const allTasksproject = new Project("All Tasks");
+    this.mProjects.push(allTasksproject);
     this.mMemoryManager = MemoryManager();
   }
 
@@ -19,9 +21,10 @@ export default class ProjectsManager {
     with the setter.
   */
   mCurrentProject;
+  mTasksId = 0;
 
   get currentProject() {
-    return this.mCurrentProject.name;
+    return this.mCurrentProject;
   }
 
   setCurrentProject(projectName) {
@@ -35,20 +38,27 @@ export default class ProjectsManager {
   }
 
   // Allows the user to get an array of availble projects in the system
-  get projectsNames() {
+  projectsNames() {
     const projects = [];
     this.mProjects.forEach((project) => projects.push(project.name));
     return projects;
   }
 
   projectsMemoryUpdate() {
-    this.mMemoryManager.saveProjects(this.projectsNames);
+    this.mMemoryManager.saveProjects(
+      this.projectsNames().filter((projectName) => projectName !== "All Tasks")
+    );
   }
 
   addProject(projectName) {
+    if (this.mProjects.find((project) => project.name === projectName)) {
+      return 0;
+    }
+
     const project = new Project(projectName);
     this.mProjects.push(project);
     this.projectsMemoryUpdate();
+    return 1;
   }
 
   removeProject(projectName) {
@@ -59,22 +69,16 @@ export default class ProjectsManager {
     this.projectsMemoryUpdate();
   }
 
+  // Get task from current project by ID
+  getTask(id) {
+    return this.mCurrentProject.tasks.find(
+      (task) => task.id === Number.parseInt(id, 10)
+    );
+  }
+
   // Get tasks of current project
   getTasks() {
     return this.mCurrentProject.tasks;
-  }
-
-  #tasksOfProject(projectName) {
-    return this.mProjects.tasks;
-  }
-
-  // Get all tasks from all projects
-  allTasks() {
-    const tasksTomorrow = [];
-    this.mProjects.forEach((project) => {
-      tasksTomorrow.push(...project.tasks);
-    });
-    return tasksTomorrow;
   }
 
   // Get all tasks with due date of today
@@ -99,42 +103,82 @@ export default class ProjectsManager {
 
   taskMemoryUpdate() {
     this.mMemoryManager.saveTasks(
-      this.mCurrentProject,
-      this.#tasksOfProject(this.mCurrentProject)
+      this.mCurrentProject.name,
+      this.mCurrentProject.tasks
     );
   }
 
   // Adding task to current project
-  addTask(name, dateDue, prio = "2", isDone = false, note = "") {
+  addTask(name, dateDue, prio = 2, isDone = false, description = "") {
     const task = new Task(
-      this.mCurrentProject.generateId(),
+      this.mTasksId,
       name,
       dateDue,
       prio,
       isDone,
-      note
+      description
     );
+    this.mTasksId += 1;
     this.mCurrentProject.addTask(task);
+    this.mProjects
+      .find((project) => project.name === "All Tasks")
+      .addTask(task);
     this.taskMemoryUpdate();
+
+    return task.id;
   }
 
   // removing task to current project
   removeTask(id) {
-    this.mCurrentProject.removeTask(id);
+    this.mProjects
+      .find(
+        (project) =>
+          project.tasks.find(
+            (taskTmp) => taskTmp.id === Number.parseInt(id, 10)
+          ) && project.name !== "All Tasks"
+      )
+      .removeTask(id);
+    this.mProjects
+      .find((project) => project.name === "All Tasks")
+      .removeTask(id);
     this.taskMemoryUpdate();
   }
 
   // Edit task of current project
-  editTask(
-    id,
-    name,
-    dateDue = undefined,
-    prio = "2",
-    isDone = false,
-    note = ""
-  ) {
-    const task = new Task(id, name, dateDue, prio, isDone, note);
-    this.mCurrentProject.replaceTask(id, task);
+  editTask(id, name, dateDue = undefined, prio = 2, description = "") {
+    const oldTask = this.mCurrentProject.tasks.find((task) => task.id === id);
+    let dueDateNew;
+    if (dateDue === undefined) {
+      dueDateNew = oldTask.dateDue;
+    }
+
+    const task = new Task(
+      id,
+      name,
+      dueDateNew,
+      prio,
+      oldTask.isDone,
+      description
+    );
+    this.mProjects
+      .find(
+        (project) =>
+          project.tasks.find((taskTmp) => taskTmp.id === oldTask.id) &&
+          project.name !== "All Tasks"
+      )
+      .replaceTask(id, task);
+    // this.mCurrentProject.replaceTask(id, task);
+    this.mProjects
+      .find((project) => project.name === "All Tasks")
+      .replaceTask(id, task);
     this.taskMemoryUpdate();
+  }
+
+  // change status of task
+  changeTaskStatus(id) {
+    const taskTarger = this.mCurrentProject.tasks.find(
+      (task) => task.id === Number.parseInt(id, 10)
+    );
+    taskTarger.isDone = !taskTarger.isDone;
   }
 }
