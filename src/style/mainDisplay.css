@@ -242,6 +242,18 @@ label[for="1"] {
   color: red;
 }
 
+[task-prio="3"]{
+  border-top: 5px solid green;
+}
+
+[task-prio="2"]{
+  border-top: 5px solid rgb(176, 176, 0);
+}
+
+[task-prio="1"]{
+  border-top: 5px solid rgb(189, 4, 4)
+}
+
 label {
   font-weight: 500;
   /* text-shadow: 1px 1px 1px black; */
