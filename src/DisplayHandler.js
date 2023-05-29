@@ -1,3 +1,4 @@
+import { format, startOfToday } from "date-fns";
 import gitImg from "./img/github.png";
 import addTaskImg from "./img/add-task.png";
 import expandTask from "./img/expand.png";
@@ -61,7 +62,16 @@ const createNewTask = (
 
     const editButton = createButton("edit-task", editTask);
     editButton.addEventListener("click", (event) => {
-      const form = createNewTaskForm(id, name, dueDate, prio, description);
+      const taskId = event.currentTarget.parentElement.parentElement.id;
+      const task = PM.getTask(taskId);
+      const form = createNewTaskForm(
+        task.id,
+        task.name,
+        task.dueDate,
+        task.prio,
+        task.description
+      );
+
       const taskContainer = event.currentTarget.parentElement.parentElement;
       taskContainer.insertAdjacentElement("afterEnd", form);
       taskContainer.remove();
@@ -87,7 +97,9 @@ const createNewTask = (
   const task = document.createElement("div");
   task.classList.add("task-container");
   task.setAttribute("id", id);
-
+  if (isDone) {
+    task.classList.add("task-is-done");
+  }
   // Task prio
   task.setAttribute("task-prio", `${prio}`);
 
@@ -99,8 +111,8 @@ const createNewTask = (
   }
   taskIsDone.addEventListener("click", (event) => {
     const taskContainer = event.target.parentElement;
+    taskContainer.classList.toggle("task-is-done");
     PM.changeTaskStatus(taskContainer.id);
-    console.log(PM);
   });
   task.appendChild(taskIsDone);
 
@@ -122,11 +134,17 @@ const createNewTask = (
   container.appendChild(task);
 };
 
+const getTodayDate = () => {
+  const today = startOfToday();
+  const date = format(today, "yyy-MM-dd");
+  return date;
+};
+
 // Creates and returns a form for new task
 const createNewTaskForm = (
   taskId = -1,
-  taskName = "aaa",
-  taskDueDate = "2022-01-01",
+  taskName = "",
+  taskDueDate = getTodayDate(),
   taskPrio = 1,
   taskDescription = "Add Description"
 ) => {
@@ -143,6 +161,9 @@ const createNewTaskForm = (
   // Create priority radio fields
   const createPrioField = () => {
     const addRadio = (fieldset, id, text, value, checked) => {
+      const container = document.createElement("div");
+      container.classList.add("radio-container");
+
       const radio = document.createElement("input");
       radio.setAttribute("type", "radio");
       radio.setAttribute("id", id);
@@ -151,12 +172,13 @@ const createNewTaskForm = (
       if (checked) {
         radio.checked = true;
       }
-      fieldset.appendChild(radio);
+      container.appendChild(radio);
 
       const radioLabel = document.createElement("label");
       radioLabel.setAttribute("for", value);
       radioLabel.textContent = text;
-      fieldset.appendChild(radioLabel);
+      container.appendChild(radioLabel);
+      fieldset.appendChild(container);
     };
 
     const fieldset = document.createElement("fieldset");
@@ -212,9 +234,6 @@ const createNewTaskForm = (
           taskDescriptionSubmit
         );
       }
-      if (taskId !== -1) {
-        taskIdSubmit = taskId;
-      }
       document.querySelector("form").remove();
       createNewTask(
         taskIdSubmit,
@@ -229,7 +248,6 @@ const createNewTaskForm = (
       ) {
         document.querySelector(".add-task-container").style.display = "block";
       }
-      console.log(PM);
     });
     return submitButton;
   };
@@ -262,8 +280,10 @@ const createNewTaskForm = (
 
   form.appendChild(createPrioField());
 
+  const taskDescriptionFormField =
+    taskDescription === "" ? "Add description" : taskDescription;
   form.appendChild(
-    createInputField("text", "task-description-form", taskDescription)
+    createInputField("text", "task-description-form", taskDescriptionFormField)
   );
 
   form.appendChild(createFormSubmitButton());
@@ -349,7 +369,7 @@ const createHeader = () => {
 
   const logo = document.createElement("div");
   logo.classList.add("logo");
-  logo.textContent = "ToDo - Projects Manager App";
+  logo.textContent = "TODO Organizer: Manage Your Projects ";
 
   header.appendChild(logo);
 
@@ -374,8 +394,8 @@ const createSideBar = () => {
       updateCurrentProject("All Tasks", "all");
     });
     tasksSection.appendChild(allTasks);
-    tasksSection.appendChild(createTasksCategory("Today", "today-tasks"));
-    tasksSection.appendChild(createTasksCategory("This Week", "week-tasks"));
+    // tasksSection.appendChild(createTasksCategory("Today", "today-tasks"));
+    // tasksSection.appendChild(createTasksCategory("This Week", "week-tasks"));
     return tasksSection;
   };
 

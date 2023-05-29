@@ -1,11 +1,8 @@
-import Task from './Task';
+import Task from "./Task";
 
 export default function MemoryManager() {
   const saveProjects = (projectsNames) => {
-    localStorage.setItem(
-      "projectsManager",
-      JSON.stringify(projectsNames)
-    );
+    localStorage.setItem("projectsManager", JSON.stringify(projectsNames));
   };
 
   const saveTasks = (projectName, tasks) => {
@@ -18,15 +15,19 @@ export default function MemoryManager() {
 
   const loadProject = (projectName, projectsManager) => {
     const tasks = JSON.parse(localStorage.getItem(projectName));
-    console.log(tasks);
     if (!tasks) {
       return;
     }
     tasks.forEach((task) => {
-      console.log(task);
-      console.log(task.id)
       const newTask = new Task(...Object.values(task));
-      projectsManager.currentProject.addTask(newTask);
+      //  addTask(name, dateDue, prio = 2, isDone = false, description = "") {
+      projectsManager.addTask(
+        newTask.name,
+        newTask.dateDue,
+        newTask.prio,
+        newTask.isDone,
+        newTask.description
+      );
     });
   };
 
@@ -35,11 +36,13 @@ export default function MemoryManager() {
     if (!projects) {
       return;
     }
-    projects.filter((project) => project.name !== "All Tasks").forEach((project) => {
-      projectsManager.addProject(project);
-      projectsManager.setCurrentProject(project);
-      loadProject(project, projectsManager);
-    });
+    projects
+      .filter((project) => project.name !== "All Tasks")
+      .forEach((project) => {
+        projectsManager.addProject(project);
+        projectsManager.setCurrentProject(project);
+        loadProject(project, projectsManager);
+      });
   };
 
   return {

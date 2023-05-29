@@ -1,21 +1,26 @@
 .footer {
   font-family: roboto, sans-serif;
-  --gap-items: 20px;
+  --gap-items: 25px;
   grid-column: 1 / span 2;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--gap-items);
-  background-color: green;
+  /* background-color: #151515; */
+  background: linear-gradient(45deg, black, #3d070e , #FF5D73);
+  color: white;
 }
 
 .footer > p {
-  border-left: 1px solid black;
+  border-left: 1px solid rgb(180, 180, 180);
   padding-left: var(--gap-items);
-  padding: 10px 0px 10px var(--gap-items);
+  padding: 5px 0px 5px var(--gap-items);
+  margin: 0;
 }
 
 
 .git-img {
+  padding: 5px 0px 4px 0px;
   height: 20px;
+  filter: invert(1);
 }

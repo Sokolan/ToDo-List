@@ -1,13 +1,41 @@
+@font-face {
+  font-family: Teko-Regular;
+  src: url("../fonts/Teko-Regular.ttf");
+}
+
+@font-face {
+  font-family: FiraSansCondensed-ExtraLight;
+  src: url("../fonts/FiraSansCondensed-ExtraLight.ttf");
+}
+
 .main-display {
-  background-color: pink;
-  display: flex;
+  --background-first-color: #4990b4e7;
+  --background-second-color: #ff5d73c0;
+  background: linear-gradient(90deg, #494949, #ff5d73);
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 20px;
   flex-direction: column;
-  padding: 20px 50px;
+  padding: 10px 200px 10px 50px;
+}
+
+.project-header {
+  font-family: Teko-Regular;
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-decoration: underline;
+  text-underline-offset: 1px;
+  text-shadow: 1px 1px 5px rgb(34, 34, 34);
+  color: #ffffff;
+  margin: 0;
 }
 
 .add-task-container {
   background-color: transparent;
-  border: 1px solid black;
+  border: none;
   padding: 0;
   display: flex;
   justify-content: center;
@@ -15,31 +43,206 @@
 }
 
 .add-task-container > img {
-  height: 20px;
+  height: 40px;
+  justify-self: end;
+  transition-duration: 0.5s;
+  border-radius: 10px;
+}
+
+.add-task-container > img:hover {
+  box-shadow: 2px 8px 2px #ffffff38;
+  margin-bottom: 10px;
+}
+
+.tasks-container {
+  grid-column: span 2;
+  align-self: first baseline;
+  display: grid;
+  gap: 30px;
+  width: 80%;
 }
 
 .task-container {
   display: grid;
-  grid-template-columns: 20px 1fr 1fr 1fr;
+  /* justify-content: space-between; */
+  grid-template-columns: 20px 1fr auto auto;
+  border-radius: 10px;
+  transition: all 0.4s;
+  padding: 5px 20px 20px 20px;
+  gap: 30px;
+  margin-right: 10px;
+  background: linear-gradient(
+    45deg,
+    var(--background-first-color),
+    var(--background-second-color)
+  );
+  color: rgb(52, 52, 52);
+  font-weight: 600;
+  font-family: FiraSansCondensed-ExtraLight;
+  font-size: 1.3rem;
+  text-shadow: 1px 1px rgba(0, 0, 0, 0.245);
+}
+
+.task-container.task-is-done {
+  opacity: 0.4;
+}
+
+.task-container input {
+  margin: 0;
+  border-radius: 50%;
+}
+
+.task-container:hover {
+  margin-bottom: 5px;
+  margin-right: 0px;
+  margin-left: 10px;
+}
+
+.task-due-date {
+  justify-self: right;
 }
 
 .task-buttons-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  
+  gap: 15px;
+  justify-self: right;
 }
 
 .task-buttons-container button {
   background-color: transparent;
-  border: 1px solid black;
+  border: none;
   padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition-duration: 0.5s;
+  border-radius: 10px;
+  outline: 1px solid rgba(38, 255, 0, 0);
+}
+
+.task-buttons-container button:hover {
+  margin-bottom: 10px;
 }
 
 .task-buttons-container img {
   height: 20px;
+}
+
+.task-buttons-container > button.resize-task > img {
+  height: 20px;
+  margin-bottom: 2px;
+}
+
+.task-container > .task-description {
+  grid-column: span 4;
+  width: 80%;
+  height: 70%;
+  justify-self: center;
+  align-self: center;
+  margin: 0;
+  border: 2px solid rgba(248, 206, 255, 0.708);
+  border-radius: 10px;
+  padding: 10px 10px;
+}
+
+form {
+  display: grid;
+  /* grid-template-columns: auto auto; */
+  grid-template-columns: repeat(2, auto);
+  gap: 15px;
+  align-items: center;
+  justify-items: center;
+  font-family: FiraSansCondensed-ExtraLight;
+  font-weight: 500;
+  text-shadow: 1px 1px 1px rgb(85, 85, 85);
+  margin: 10px 20px;
+  padding: 20px 20px;
+  background: linear-gradient(90deg, var(--background-first-color), var(--background-second-color));
+  border-radius: 30px 30px 10px 30px;
+}
+
+.main-display > form {
+  width: 60%;
+}
+
+.tasks-container > form {
+  margin-right: 10px;
+  margin-left: 0;
+}
+
+form input{
+  padding: 5px 10px;
+  width: 50%;
+  border-radius: 10px;
+  border: none;
+  font-family: FiraSansCondensed-ExtraLight;
+  font-weight: 600;
+  transition-duration: .5s;
+}
+
+form input:hover {
+  box-shadow: 0px 0px 5px #ffffff;
+}
+
+form input:focus {
+  outline: none;
+  box-shadow: 0px 0px 8px #adffa1;
+}
+
+fieldset {
+  grid-column: span 2;
+  border: none;
+  display: grid;
+  text-align: center;
+  grid-template-columns: repeat(6, auto);
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+}
+
+#task-description-form {
+  grid-column: span 2;
+}
+
+form button[type="submit"] {
+  grid-column: span 2;
+  font-weight: 500;
+  font-family: Teko-Light;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  padding: 5px 10px;
+  box-shadow: 0px 0px 5px #00BD9D;
+  transition-duration: 0.5s;
+}
+
+form button[type="submit"]:hover {
+  box-shadow: 0px 0px 5px 2px #00BD9D;
+}
+
+legend {
+
+  text-decoration: underline;
+  align-self: center;
+}
+
+
+
+label[for="3"] {
+  color: green;
+}
+
+label[for="2"] {
+  color: yellow;
+}
+
+label[for="1"] {
+  color: red;
+}
+
+label {
+  font-weight: 500;
+  /* text-shadow: 1px 1px 1px black; */
 }

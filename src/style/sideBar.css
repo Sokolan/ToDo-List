@@ -1,8 +1,19 @@
+@font-face {
+  font-family: Teko-Regular;
+  src: url('../fonts/Teko-Regular.ttf');
+}
+
+@font-face {
+  font-family: Teko-Light;
+  src: url('../fonts/FiraSansCondensed-Light.ttf');
+}
+
 .side-bar {
   display: flex;
   flex-direction: column;
-  padding: 5px 10px;
-  background-color: orange;
+  padding: 30px 10px;
+  gap: 20px;
+  background-color: #494949;
 }
 
 .tasks-section {
@@ -11,14 +22,76 @@
   gap: 10px;
 }
 
+.tasks-section > button {
+  background: linear-gradient(90deg, #c54758, #ff5d73, #ff5454);
+  color: rgb(255, 255, 255);
+  text-shadow: 1px 1px 1px rgb(52, 52, 52);
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: Teko-Light;
+  transition-duration: .5s;
+}
+
+.tasks-section > button:hover {
+  box-shadow: 0px 0px 5px #ffffff;
+}
+
 .projects-section {
   display: flex;
   flex-direction: column;
+  gap: 5px;
   height: 100%;
+}
+
+.projects-section-header {
+  font-family: Teko-Regular;
+  color: #FF5D73;
+  text-shadow: 2px 2px 1px rgb(78, 78, 78);
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 1px;
+  margin: 0;
 }
 
 .add-project-container {
   display: flex;
+  gap: 10px;
+}
+
+.add-project-container > #new-project {
+  border-radius: 10px;
+  border: none;
+  padding: 5px;
+  text-indent: 10px;
+  font-family: Teko-Light;
+  transition-duration: 0.5s;
+
+}
+
+.add-project-container > #new-project:hover {
+  box-shadow: 0px 0px 5px #ffffff;
+}
+
+.add-project-container > #new-project:focus {
+  box-shadow: 0px 0px 5px #73ff00;
+  outline: none;
+}
+
+.add-project-container > .add-project-submit {
+  font-weight: 800;
+  border-radius: 10px;
+  border: none;
+  padding: 5px 10px;
+  box-shadow: 0px 0px 5px #00BD9D;
+  transition-duration: 0.5s;
+}
+
+.add-project-container > .add-project-submit:hover {
+  box-shadow: 0px 0px 5px 3px #00BD9D;
+
 }
 
 ul {
@@ -26,12 +99,10 @@ ul {
 }
 
 .projects-container {
-  height: 100%;
-  border: 2px solid black;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px 10px;
+  padding: 40px 10px;
   align-items: left;
 }
 
@@ -42,12 +113,32 @@ ul {
 }
 
 .project-container > button {
-  background-color: yellow;
+  background: linear-gradient(90deg, #c54758, #ff5d73, #ff5454);
+  color: rgb(255, 255, 255);
   border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 5px 10px;
+  transition-duration: 0.5s;
+  letter-spacing: 1px;
+}
+
+.project-container > .project {
+  font-family: Teko-Light;
+  text-shadow: 1px 1px 1px rgb(52, 52, 52);
+}
+
+.project-container > .project:hover {
+  box-shadow: 0px 0px 5px 3px rgba(126, 255, 152, 0.233);
+}
+
+.project-container > .delete-project:hover {
+  box-shadow: 0px 0px 5px 3px rgb(205, 0, 0);
+
 }
 
 .projects-container > .project-container:not(:first-child) {
   /* Your styles here */
-  border-top: 1px solid black;
+  border-top: 1px solid #ffa6b2;
   padding: 10px 0px 0px 0px;
 }

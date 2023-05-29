@@ -51,7 +51,10 @@ export default class ProjectsManager {
   }
 
   addProject(projectName) {
-    if (this.mProjects.find((project) => project.name === projectName)) {
+    if (
+      projectName === "" ||
+      this.mProjects.find((project) => project.name === projectName)
+    ) {
       return 0;
     }
 
@@ -110,6 +113,7 @@ export default class ProjectsManager {
 
   // Adding task to current project
   addTask(name, dateDue, prio = 2, isDone = false, description = "") {
+    console.log("add", this);
     const task = new Task(
       this.mTasksId,
       name,
@@ -146,10 +150,13 @@ export default class ProjectsManager {
 
   // Edit task of current project
   editTask(id, name, dateDue = undefined, prio = 2, description = "") {
+    console.log("edit", this);
     const oldTask = this.mCurrentProject.tasks.find((task) => task.id === id);
     let dueDateNew;
     if (dateDue === undefined) {
       dueDateNew = oldTask.dateDue;
+    } else {
+      dueDateNew = dateDue;
     }
 
     const task = new Task(
