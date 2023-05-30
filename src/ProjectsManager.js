@@ -21,6 +21,7 @@ export default class ProjectsManager {
     with the setter.
   */
   mCurrentProject;
+  
   mTasksId = 0;
 
   get currentProject() {
@@ -115,7 +116,6 @@ export default class ProjectsManager {
 
   // Adding task to current project
   addTask(name, dateDue, prio = 2, isDone = false, description = "") {
-    console.log("add", this);
     const task = new Task(
       this.mTasksId,
       name,
@@ -152,7 +152,6 @@ export default class ProjectsManager {
 
   // Edit task of current project
   editTask(id, name, dateDue = undefined, prio = 2, description = "") {
-    console.log("edit", this);
     const oldTask = this.mCurrentProject.tasks.find((task) => task.id === id);
     let dueDateNew;
     if (dateDue === undefined) {
