@@ -68,6 +68,8 @@ export default class ProjectsManager {
     const index = this.mProjects.findIndex(
       (project) => project.name === projectName
     );
+    const tasksToDelete = this.mProjects[index].tasks;
+    tasksToDelete.forEach((task) => this.removeTask(task.id));
     this.mProjects.splice(index, 1);
     this.projectsMemoryUpdate();
   }

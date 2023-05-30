@@ -433,7 +433,8 @@ const createSideBar = () => {
             `[project-name="${projectName}"]`
           );
           projectsContainer.removeChild(project.parentElement);
-          if (PM.currentProject.name === projectName) {
+          if (PM.currentProject.name === projectName ||
+            PM.currentProject.name === "All Tasks") {
             document.querySelector(".main-display").replaceChildren();
           }
           PM.removeProject(projectName);
